@@ -92,17 +92,7 @@ namespace Files
             };
         }
 
-        private void CoreWindow_PointerPressed(CoreWindow sender, PointerEventArgs args)
-        {
-            if (args.CurrentPoint.Properties.IsXButton1Pressed)
-            {
-                NavigationActions.Back_Click(null, null);
-            }
-            else if (args.CurrentPoint.Properties.IsXButton1Pressed)
-            {
-                NavigationActions.Forward_Click(null, null);
-            }
-        }
+
 
         public static INavigationControlItem rightClickedItem;
 
@@ -131,28 +121,27 @@ namespace Files
                     DataPackageView packageView = Clipboard.GetContent();
                     if (packageView.Contains(StandardDataFormats.StorageItems) && App.CurrentInstance.CurrentPageType != typeof(YourHome))
                     {
-                        App.PS.IsEnabled = true;
+                        App.InteractionViewModel.IsPasteEnabled = true;
                     }
                     else
                     {
-                        App.PS.IsEnabled = false;
+                        App.InteractionViewModel.IsPasteEnabled = false;
                     }
                 }
                 else
                 {
-                    App.PS.IsEnabled = false;
+                    App.InteractionViewModel.IsPasteEnabled = false;
                 }
             }
             catch (Exception)
             {
-                App.PS.IsEnabled = false;
+                App.InteractionViewModel.IsPasteEnabled = false;
             }
 
         }
 
         public static Windows.UI.Xaml.UnhandledExceptionEventArgs ExceptionInfo { get; set; }
         public static string ExceptionStackTrace { get; set; }
-        public static PasteState PS { get; set; } = new PasteState();
         public static List<string> pathsToDeleteAfterPaste = new List<string>();
 
         /// <summary>
@@ -208,7 +197,6 @@ namespace Files
 
                 // Ensure the current window is active
                 Window.Current.Activate();
-                Window.Current.CoreWindow.PointerPressed += CoreWindow_PointerPressed;
             }
         }
 
@@ -239,7 +227,6 @@ namespace Files
                     }
                     // Ensure the current window is active.
                     Window.Current.Activate();
-                    Window.Current.CoreWindow.PointerPressed += CoreWindow_PointerPressed;
                     return;
 
                 case ActivationKind.CommandLineLaunch:
@@ -263,13 +250,11 @@ namespace Files
 
                                     // Ensure the current window is active.
                                     Window.Current.Activate();
-                                    Window.Current.CoreWindow.PointerPressed += CoreWindow_PointerPressed;
                                     return;
-                                case ParsedCommandType.Unkwon:
+                                case ParsedCommandType.Unknown:
                                     rootFrame.Navigate(typeof(InstanceTabsView), null, new SuppressNavigationTransitionInfo());
                                     // Ensure the current window is active.
                                     Window.Current.Activate();
-                                    Window.Current.CoreWindow.PointerPressed += CoreWindow_PointerPressed;
                                     return;
                             }
                         }
@@ -281,7 +266,6 @@ namespace Files
 
             // Ensure the current window is active.
             Window.Current.Activate();
-            Window.Current.CoreWindow.PointerPressed += CoreWindow_PointerPressed;
         }
 
         private void TryEnablePrelaunch()

@@ -57,7 +57,7 @@ namespace Files
             instanceTabsView.SetSelectedTabInfo(parameters, null);
             instanceTabsView.TabStrip_SelectionChanged(null, null);
             App.CurrentInstance.NavigationToolbar.CanRefresh = false;
-            App.PS.IsEnabled = false;
+            App.InteractionViewModel.IsPasteEnabled = false;
             //(App.CurrentInstance.OperationsControl as RibbonArea).RibbonViewModel.AlwaysPresentCommands.isEnabled = false;
             //(App.CurrentInstance.OperationsControl as RibbonArea).RibbonViewModel.LayoutItems.isEnabled = false;
             App.CurrentInstance.NavigationToolbar.CanGoBack = App.CurrentInstance.ContentFrame.CanGoBack;
@@ -222,7 +222,7 @@ namespace Files
             var path = (e.ClickedItem as RecentItem).RecentPath;
             try
             {
-                await Interaction.InvokeWin32Component(path);
+                await BaseLayout.InvokeWin32Component(path);
             }
             catch (UnauthorizedAccessException)
             {

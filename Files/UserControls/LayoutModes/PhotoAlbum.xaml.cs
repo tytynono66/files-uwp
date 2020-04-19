@@ -41,7 +41,7 @@ namespace Files
                 foreach (ListedItem listedItem in FileList.Items)
                 {
                     GridViewItem gridViewItem = FileList.ContainerFromItem(listedItem) as GridViewItem;
-                    
+
                     List<Grid> grids = new List<Grid>();
                     FindHelpers.FindChildren<Grid>(grids, gridViewItem);
                     var imageOfItem = grids.Find(x => x.Tag?.ToString() == "ItemRoot");
@@ -231,5 +231,11 @@ namespace Files
         public void SelectAllItems() => FileList.SelectAll();
 
         public void ClearAllItems() => FileList.SelectedItems.Clear();
+
+        public void SelectAndScrollItemIntoView(ListedItem li)
+        {
+            FileList.SelectedItem = li;
+            FileList.ScrollIntoView(li);
+        }
     }
 }

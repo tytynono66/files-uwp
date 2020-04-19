@@ -2,7 +2,9 @@
 using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -10,156 +12,68 @@ using Windows.UI.Xaml.Media;
 
 namespace Files.View_Models
 {
-    public class SelectedItemPropertiesViewModel : ViewModelBase
+    public class SelectedItemPropertiesViewModel : INotifyPropertyChanged
     {
-        public string ItemName 
+        private ListedItem scopedItem;
+        public ListedItem ScopedItem 
         { 
-            get 
-            {
-                if (App.CurrentInstance.ContentPage.IsItemSelected)
-                {
-                    return App.CurrentInstance.ContentPage.SelectedItems[0].ItemName;
-                }
-                else
-                {
-                    return null;
-                }
-            } 
-        }
-        public string ItemType
-        {
             get
             {
-                if (App.CurrentInstance.ContentPage.IsItemSelected)
+                return scopedItem;
+            }
+            set
+            {
+                scopedItem = value;
+                NotifyPropertyChanged("ScopedItem");
+                // Set properties for item in scope accordingly
+                ItemName = value?.ItemName;
+                NotifyPropertyChanged("ItemName");
+                ItemType = value?.ItemType;
+                NotifyPropertyChanged("ItemType");
+                ItemPath = value?.ItemPath;
+                NotifyPropertyChanged("ItemPath");
+                ItemSize = value?.FileSize;
+                NotifyPropertyChanged("FileSize");
+                ItemModifiedTimestamp = value?.ItemDateModified;
+                NotifyPropertyChanged("ItemDateModified");
+                FileIconSource = value?.FileImage;
+                NotifyPropertyChanged("FileImage");
+                if(value != null)
                 {
-                    return App.CurrentInstance.ContentPage.SelectedItems[0].ItemType;
+                    LoadFolderGlyph = value.LoadFolderGlyph;
+                    NotifyPropertyChanged("LoadFolderGlyph");
+                    LoadUnknownTypeGlyph = value.LoadUnknownTypeGlyph;
+                    NotifyPropertyChanged("LoadUnknownTypeGlyph");
+                    LoadFileIcon = value.LoadFileIcon;
+                    NotifyPropertyChanged("LoadFileIcon");
                 }
                 else
                 {
-                    return null;
+                    LoadFolderGlyph = false;
+                    NotifyPropertyChanged("LoadFolderGlyph");
+                    LoadUnknownTypeGlyph = false;
+                    NotifyPropertyChanged("LoadUnknownTypeGlyph");
+                    LoadFileIcon = false;
+                    NotifyPropertyChanged("LoadFileIcon");
                 }
+                
             }
         }
-        public string ItemPath
+
+        public string ItemName { get;  internal set; }
+        public string ItemType { get; internal set; }
+        public string ItemPath { get; internal set; }
+        public string ItemSize { get; internal set; }
+        public string ItemModifiedTimestamp { get; internal set; }
+        public ImageSource FileIconSource { get; internal set; }
+        public bool LoadFolderGlyph { get; internal set; }
+        public bool LoadUnknownTypeGlyph { get; internal set; }
+        public bool LoadFileIcon { get; internal set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            get
-            {
-                if (App.CurrentInstance.ContentPage.IsItemSelected)
-                {
-                    return App.CurrentInstance.ContentPage.SelectedItems[0].ItemPath;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
-        public string ItemSize 
-        { 
-            get 
-            {
-                if (App.CurrentInstance.ContentPage.IsItemSelected)
-                {
-                    return App.CurrentInstance.ContentPage.SelectedItems[0].FileSize;
-                }
-                else
-                {
-                    return null;
-                }
-            } 
-        }
-        public string ItemCreatedTimestamp
-        {
-            get
-            {
-                if (App.CurrentInstance.ContentPage.IsItemSelected)
-                {
-                    DateTimeOffset dateCreated;
-                    if (App.CurrentInstance.ContentPage.SelectedItem.PrimaryItemAttribute == StorageItemTypes.Folder)
-                    {
-                        dateCreated = StorageFolder.GetFolderFromPathAsync(App.CurrentInstance.ContentPage.SelectedItem.ItemPath).GetResults().DateCreated;
-                    }
-                    else if (App.CurrentInstance.ContentPage.SelectedItem.PrimaryItemAttribute == StorageItemTypes.File)
-                    {
-                        dateCreated = StorageFile.GetFileFromPathAsync(App.CurrentInstance.ContentPage.SelectedItem.ItemPath).GetResults().DateCreated;
-                    }
-                    return ListedItem.GetFriendlyDate(dateCreated);
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
-        public string ItemModifiedTimestamp
-        { 
-            get 
-            {
-                if (App.CurrentInstance.ContentPage.IsItemSelected)
-                {
-                    return App.CurrentInstance.ContentPage.SelectedItems[0].ItemDateModified;
-                }
-                else
-                {
-                    return null;
-                }
-            } 
-        }
-        public ImageSource FileIconSource
-        {
-            get
-            {
-                if (App.CurrentInstance.ContentPage.IsItemSelected)
-                {
-                    return App.CurrentInstance.ContentPage.SelectedItems[0].FileImage;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
-        public bool LoadFolderGlyph
-        {
-            get
-            {
-                if (App.CurrentInstance.ContentPage.IsItemSelected)
-                {
-                    return App.CurrentInstance.ContentPage.SelectedItems[0].LoadFolderGlyph;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-        public bool LoadUnknownTypeGlyph
-        {
-            get
-            {
-                if (App.CurrentInstance.ContentPage.IsItemSelected)
-                {
-                    return App.CurrentInstance.ContentPage.SelectedItems[0].LoadUnknownTypeGlyph;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-        public bool LoadFileIcon
-        {
-            get
-            {
-                if (App.CurrentInstance.ContentPage.IsItemSelected)
-                {
-                    return App.CurrentInstance.ContentPage.SelectedItems[0].LoadFileIcon;
-                }
-                else
-                {
-                    return false;
-                }
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

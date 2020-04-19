@@ -11,6 +11,7 @@ namespace Files.Interacts
         public abstract void ResetDimmedItems();
         public abstract void SelectAllItems();
         public abstract void ClearAllItems();
+        public abstract void SelectAndScrollItemIntoView(ListedItem li);
     }
 }
 

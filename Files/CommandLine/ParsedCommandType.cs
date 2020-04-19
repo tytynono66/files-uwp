@@ -8,7 +8,7 @@ namespace Files.CommandLine
 {
 	enum ParsedCommandType
 	{
-		Unkwon,
+		Unknown,
 		OpenDirectory,
 	}
 }

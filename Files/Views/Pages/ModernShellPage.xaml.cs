@@ -21,6 +21,10 @@ namespace Files.Views.Pages
 {
     public sealed partial class ModernShellPage : Page, IShellPage
     {
+        public event EventHandler RefreshRequestedEvent;
+        public event EventHandler CancelLoadRequestedEvent;
+        public event EventHandler NavigateToParentRequestedEvent;
+
         public ModernShellPage()
         {
             this.InitializeComponent();
@@ -34,6 +38,7 @@ namespace Files.Views.Pages
             App.CurrentInstance.NavigationToolbar.PathControlDisplayText = "New tab";
             App.CurrentInstance.NavigationToolbar.CanGoBack = false;
             App.CurrentInstance.NavigationToolbar.CanGoForward = false;
+            Window.Current.CoreWindow.PointerPressed += CoreWindow_PointerPressed;
         }
 
         Type IShellPage.CurrentPageType => ItemDisplayFrame.SourcePageType;
@@ -192,13 +197,13 @@ namespace Files.Views.Pages
             switch (c: ctrl, s: shift, a: alt, t: tabInstance, k: e.Key)
             {
                 case (false, false, true, true, VirtualKey.Left): //alt + back arrow, backward
-                    NavigationActions.Back_Click(null, null);
+                    Back_Click(null, null);
                     break;
                 case (false, false, true, true, VirtualKey.Right): //alt + right arrow, forward
-                    NavigationActions.Forward_Click(null, null);
+                    Forward_Click(null, null);
                     break;
                 case (true, false, false, true, VirtualKey.R): //ctrl + r, refresh
-                    NavigationActions.Refresh_Click(null, null);
+                    Refresh_Click(null, null);
                     break;
                     //case (true, false, false, true, VirtualKey.F): //ctrl + f, search box
                     //    (App.CurrentInstance.OperationsControl as RibbonArea).RibbonTabView.SelectedIndex = 0;
@@ -216,6 +221,64 @@ namespace Files.Views.Pages
                     //    (App.CurrentInstance.OperationsControl as RibbonArea).RibbonTabView.SelectedIndex = 3;
                     //    break;
             };
+        }
+
+        private void CoreWindow_PointerPressed(CoreWindow sender, PointerEventArgs args)
+        {
+            if (args.CurrentPoint.Properties.IsXButton1Pressed)
+            {
+                Back_Click(null, null);
+            }
+            else if (args.CurrentPoint.Properties.IsXButton1Pressed)
+            {
+                Forward_Click(null, null);
+            }
+        }
+
+        public void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshRequestedEvent?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void Back_Click(object sender, RoutedEventArgs e)
+        {
+            App.CurrentInstance.NavigationToolbar.CanGoBack = false;
+            if (ItemDisplayFrame.CanGoBack)
+            {
+                CancelLoadRequestedEvent?.Invoke(this, EventArgs.Empty);
+                var previousSourcePageType = ItemDisplayFrame.BackStack[ItemDisplayFrame.BackStack.Count - 1].SourcePageType;
+
+                if (previousSourcePageType == typeof(YourHome) && previousSourcePageType != null)
+                {
+                    App.CurrentInstance.SidebarSelectedItem = App.sideBarItems.First(x => x.Path.Equals("Home"));
+                    App.CurrentInstance.NavigationToolbar.PathControlDisplayText = "New tab";
+                }
+                ItemDisplayFrame.GoBack();
+            }
+        }
+
+        public void Forward_Click(object sender, RoutedEventArgs e)
+        {
+            App.CurrentInstance.NavigationToolbar.CanGoForward = false;
+            if (ItemDisplayFrame.CanGoForward)
+            {
+                CancelLoadRequestedEvent?.Invoke(this, EventArgs.Empty);
+                var incomingSourcePageType = ItemDisplayFrame.ForwardStack[ItemDisplayFrame.ForwardStack.Count - 1].SourcePageType;
+
+                if (incomingSourcePageType == typeof(YourHome) && incomingSourcePageType != null)
+                {
+                    App.CurrentInstance.SidebarSelectedItem = App.sideBarItems.First(x => x.Path.Equals("Home"));
+                    App.CurrentInstance.NavigationToolbar.PathControlDisplayText = "New tab";
+                }
+                ItemDisplayFrame.GoForward();
+            }
+        }
+
+        public void Up_Click(object sender, RoutedEventArgs e)
+        {
+            App.CurrentInstance.NavigationToolbar.CanNavigateToParent = false;
+            CancelLoadRequestedEvent?.Invoke(this, EventArgs.Empty);
+            NavigateToParentRequestedEvent?.Invoke(this, EventArgs.Empty);
         }
     }
 

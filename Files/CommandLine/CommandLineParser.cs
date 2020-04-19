@@ -27,7 +27,7 @@ namespace Files.CommandLine
 						command.Type = ParsedCommandType.OpenDirectory;
 						break;
 					default:
-						command.Type = ParsedCommandType.Unkwon;
+						command.Type = ParsedCommandType.Unknown;
 						break;
 				}
 

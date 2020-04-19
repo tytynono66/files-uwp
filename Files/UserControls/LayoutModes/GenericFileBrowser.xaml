@@ -28,33 +28,33 @@
                 <muxc:RadioMenuFlyoutItem
                     x:Uid="BaseLayoutContextFlyoutSortByName"
                     GroupName="SortGroup"
-                    IsChecked="{x:Bind AssociatedViewModel.IsSortedByName, Mode=TwoWay}"
+                    IsChecked="{x:Bind ViewModel.IsSortedByName, Mode=TwoWay}"
                     Text="Name" />
                 <muxc:RadioMenuFlyoutItem
                     x:Uid="BaseLayoutContextFlyoutSortByDate"
                     GroupName="SortGroup"
-                    IsChecked="{x:Bind AssociatedViewModel.IsSortedByDate, Mode=TwoWay}"
+                    IsChecked="{x:Bind ViewModel.IsSortedByDate, Mode=TwoWay}"
                     Text="Date modified" />
                 <muxc:RadioMenuFlyoutItem
                     x:Uid="BaseLayoutContextFlyoutSortByType"
                     GroupName="SortGroup"
-                    IsChecked="{x:Bind AssociatedViewModel.IsSortedByType, Mode=TwoWay}"
+                    IsChecked="{x:Bind ViewModel.IsSortedByType, Mode=TwoWay}"
                     Text="Type" />
                 <muxc:RadioMenuFlyoutItem
                     x:Uid="BaseLayoutContextFlyoutSortBySize"
                     GroupName="SortGroup"
-                    IsChecked="{x:Bind AssociatedViewModel.IsSortedBySize, Mode=TwoWay}"
+                    IsChecked="{x:Bind ViewModel.IsSortedBySize, Mode=TwoWay}"
                     Text="Size" />
                 <MenuFlyoutSeparator />
                 <muxc:RadioMenuFlyoutItem
                     x:Uid="BaseLayoutContextFlyoutSortByAscending"
                     GroupName="SortOrderGroup"
-                    IsChecked="{x:Bind AssociatedViewModel.IsSortedAscending, Mode=TwoWay}"
+                    IsChecked="{x:Bind ViewModel.IsSortedAscending, Mode=TwoWay}"
                     Text="Ascending" />
                 <muxc:RadioMenuFlyoutItem
                     x:Uid="BaseLayoutContextFlyoutSortByDescending"
                     GroupName="SortOrderGroup"
-                    IsChecked="{x:Bind AssociatedViewModel.IsSortedDescending, Mode=TwoWay}"
+                    IsChecked="{x:Bind ViewModel.IsSortedDescending, Mode=TwoWay}"
                     Text="Descending" />
             </MenuFlyoutSubItem>
             <MenuFlyoutItem
@@ -71,7 +71,7 @@
                 x:Name="PasteEmptySpace"
                 x:Uid="BaseLayoutContextFlyoutPaste"
                 Click="{x:Bind local:App.CurrentInstance.InteractionOperations.PasteItem_ClickAsync}"
-                IsEnabled="{x:Bind local:App.PS.IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                IsEnabled="{x:Bind local:App.InteractionViewModel.IsPasteEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 Text="Paste">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE77F;" />
@@ -282,7 +282,7 @@
             Height="10"
             VerticalAlignment="Top"
             IsIndeterminate="True"
-            Visibility="{x:Bind AssociatedViewModel.LoadIndicator.IsVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            Visibility="{x:Bind ViewModel.LoadIndicator.IsVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <TextBlock
             x:Name="EmptyText"
             x:Uid="EmptyFolder"
@@ -291,7 +291,7 @@
             VerticalAlignment="Top"
             Text="This folder is empty."
             TextWrapping="Wrap"
-            Visibility="{x:Bind AssociatedViewModel.EmptyTextState.IsVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            Visibility="{x:Bind ViewModel.EmptyTextState.IsVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <controls:DataGrid
             x:Name="AllView"
@@ -313,7 +313,7 @@
             FocusVisualPrimaryThickness="0"
             IsDoubleTapEnabled="True"
             IsRightTapEnabled="True"
-            ItemsSource="{x:Bind AssociatedViewModel.FilesAndFolders, Mode=OneWay}"
+            ItemsSource="{x:Bind ViewModel.FilesAndFolders, Mode=OneWay}"
             PreparingCellForEdit="AllView_PreparingCellForEdit"
             PreviewKeyDown="AllView_PreviewKeyDown"
             RightTapped="{x:Bind local:App.CurrentInstance.InteractionOperations.AllView_RightTapped}"

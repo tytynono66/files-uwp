@@ -75,9 +75,6 @@ namespace Files.Filesystem
         private const int _step = 250;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private string _jumpString = "";
-        private readonly DispatcherTimer jumpTimer = new DispatcherTimer();
-
         private SortOption _directorySortOption = SortOption.Name;
         private SortDirection _directorySortDirection = SortDirection.Ascending;
 
@@ -201,65 +198,7 @@ namespace Files.Filesystem
             }
         }
 
-        public string JumpString
-        {
-            get
-            {
-                return _jumpString;
-            }
-            set
-            {
-                // If current string is "a", and the next character typed is "a",
-                // search for next file that starts with "a" (a.k.a. _jumpString = "a")
-                if (_jumpString.Length == 1 && value == _jumpString + _jumpString)
-                {
-                    value = _jumpString;
-                }
-                if (value != "")
-                {
-                    ListedItem jumpedToItem = null;
-                    ListedItem previouslySelectedItem = null;
-                    var candidateItems = _filesAndFolders.Where(f => f.ItemName.Length >= value.Length && f.ItemName.Substring(0, value.Length).ToLower() == value);
-                    if (App.CurrentInstance.CurrentPageType == typeof(GenericFileBrowser))
-                    {
-                        previouslySelectedItem = (App.CurrentInstance.ContentPage as GenericFileBrowser).AllView.SelectedItem as ListedItem;
-                    }
-                    else if (App.CurrentInstance.CurrentPageType == typeof(PhotoAlbum))
-                    {
-                        previouslySelectedItem = (App.CurrentInstance.ContentPage as PhotoAlbum).FileList.SelectedItem as ListedItem;
-                    }
 
-                    // If the user is trying to cycle through items
-                    // starting with the same letter
-                    if (value.Length == 1 && previouslySelectedItem != null)
-                    {
-                        // Try to select item lexicographically bigger than the previous item
-                        jumpedToItem = candidateItems.FirstOrDefault(f => f.ItemName.CompareTo(previouslySelectedItem.ItemName) > 0);
-                    }
-                    if (jumpedToItem == null)
-                        jumpedToItem = candidateItems.FirstOrDefault();
-
-                    if (jumpedToItem != null)
-                    {
-                        if (App.CurrentInstance.CurrentPageType == typeof(GenericFileBrowser))
-                        {
-                            (App.CurrentInstance.ContentPage as GenericFileBrowser).AllView.SelectedItem = jumpedToItem;
-                            (App.CurrentInstance.ContentPage as GenericFileBrowser).AllView.ScrollIntoView(jumpedToItem, null);
-                        }
-                        else if (App.CurrentInstance.CurrentPageType == typeof(PhotoAlbum))
-                        {
-                            (App.CurrentInstance.ContentPage as PhotoAlbum).FileList.SelectedItem = jumpedToItem;
-                            (App.CurrentInstance.ContentPage as PhotoAlbum).FileList.ScrollIntoView(jumpedToItem);
-                        }
-
-                    }
-
-                    // Restart the timer
-                    jumpTimer.Start();
-                }
-                _jumpString = value;
-            }
-        }
 
         public ItemViewModel()
         {
@@ -267,15 +206,10 @@ namespace Files.Filesystem
             FilesAndFolders = new ReadOnlyObservableCollection<ListedItem>(_filesAndFolders);
             _cancellationTokenSource = new CancellationTokenSource();
 
-            jumpTimer.Interval = TimeSpan.FromSeconds(0.8);
-            jumpTimer.Tick += JumpTimer_Tick;
+
         }
 
-        private void JumpTimer_Tick(object sender, object e)
-        {
-            _jumpString = "";
-            jumpTimer.Stop();
-        }
+
 
         /*
          * Ensure that the path bar gets updated for user interaction

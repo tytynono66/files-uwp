@@ -123,6 +123,7 @@ namespace Files
         public void AddNewTab(Type t, string path)
         {
             Frame frame = new Frame();
+            frame.IsNavigationStackEnabled = false;
             //frame.Navigate(t, path);
             string tabLocationHeader = null;
             Microsoft.UI.Xaml.Controls.FontIconSource fontIconSource = new Microsoft.UI.Xaml.Controls.FontIconSource();

@@ -281,7 +281,7 @@ namespace Files
             {
                 AppWindow appWindow = await AppWindow.TryCreateAsync();
                 Frame frame = new Frame();
-                frame.Navigate(typeof(Properties), null, new SuppressNavigationTransitionInfo());
+                frame.Navigate(typeof(Properties), SelectedItem, new SuppressNavigationTransitionInfo());
                 WindowManagementPreview.SetPreferredMinSize(appWindow, new Size(400, 475));
                 appWindow.RequestSize(new Size(400, 475));
                 appWindow.Title = "Properties"; // TODO: Localize this
@@ -830,10 +830,10 @@ namespace Files
 
         public void PushJumpChar(char letter)
         {
-            ViewModel.JumpString += letter.ToString().ToLower();
+            JumpString += letter.ToString().ToLower();
         }
 
-        public async Task<string> GetHashForFile(ListedItem fileItem, string nameOfAlg)
+        public static async Task<string> GetHashForFile(ListedItem fileItem, string nameOfAlg)
         {
             HashAlgorithmProvider algorithmProvider = HashAlgorithmProvider.OpenAlgorithm(nameOfAlg);
             CryptographicHash objHash = algorithmProvider.CreateHash();
@@ -845,6 +845,28 @@ namespace Files
             IBuffer bufferHash = objHash.GetValueAndReset();
 
             return CryptographicBuffer.EncodeToHexString(bufferHash);
+        }
+
+        public void CheckForImage()
+        {
+            //check if the selected item is an image file
+            try
+            {
+                string ItemExtension = SelectedItem.FileExtension;
+
+                if (ItemExtension.Equals(".png", StringComparison.OrdinalIgnoreCase) || ItemExtension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) 
+                    || ItemExtension.Equals(".bmp", StringComparison.OrdinalIgnoreCase) || ItemExtension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Since item is an image, set the IsSelectedItemImage property to true
+                    App.InteractionViewModel.IsSelectedItemImage = true;
+                }
+                else
+                {
+                    // Since item is not an image, set the IsSelectedItemImage property to false
+                    App.InteractionViewModel.IsSelectedItemImage = false;
+                }
+            }
+            catch (Exception) { }
         }
     }
 }

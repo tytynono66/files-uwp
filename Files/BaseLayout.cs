@@ -14,6 +14,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 
@@ -24,6 +25,51 @@ namespace Files
     /// </summary>
     public abstract partial class BaseLayout : Page, INotifyPropertyChanged
     {
+        private string _jumpString = "";
+        private readonly DispatcherTimer jumpTimer = new DispatcherTimer();
+        public string JumpString
+        {
+            get
+            {
+                return _jumpString;
+            }
+            set
+            {
+                // If current string is "a", and the next character typed is "a",
+                // search for next file that starts with "a" (a.k.a. _jumpString = "a")
+                if (_jumpString.Length == 1 && value == _jumpString + _jumpString)
+                {
+                    value = _jumpString;
+                }
+                if (value != "")
+                {
+                    ListedItem jumpedToItem = null;
+                    ListedItem previouslySelectedItem = null;
+                    var candidateItems = ViewModel._filesAndFolders.Where(f => f.ItemName.Length >= value.Length && f.ItemName.Substring(0, value.Length).ToLower() == value);
+                    previouslySelectedItem = SelectedItem;
+
+                    // If the user is trying to cycle through items
+                    // starting with the same letter
+                    if (value.Length == 1 && previouslySelectedItem != null)
+                    {
+                        // Try to select item lexicographically bigger than the previous item
+                        jumpedToItem = candidateItems.FirstOrDefault(f => f.ItemName.CompareTo(previouslySelectedItem.ItemName) > 0);
+                    }
+                    if (jumpedToItem == null)
+                        jumpedToItem = candidateItems.FirstOrDefault();
+
+                    if (jumpedToItem != null)
+                    {
+                        (App.CurrentInstance.ContentFrame.Content as IChildLayout).SelectAndScrollItemIntoView(jumpedToItem);
+                    }
+
+                    // Restart the timer
+                    jumpTimer.Start();
+                }
+                _jumpString = value;
+            }
+        }
+
         public Interaction AssociatedOperations { get; internal set; }
         public ItemViewModel ViewModel { get; internal set; }
         public bool IsQuickLookEnabled { get; set; } = false;
@@ -91,10 +137,12 @@ namespace Files
                     if (value == null)
                     {
                         IsItemSelected = false;
+                        App.SelectedItemPropertiesViewModel.ScopedItem = null;
                     }
                     else
                     {
                         IsItemSelected = true;
+                        App.SelectedItemPropertiesViewModel.ScopedItem = value;
                     }
                     SetSelectedItemOnUi(value);
                     NotifyPropertyChanged("SelectedItem");
@@ -115,6 +163,35 @@ namespace Files
             {
                 IsQuickLookEnabled = true;
             }
+            jumpTimer.Interval = TimeSpan.FromSeconds(0.8);
+            jumpTimer.Tick += JumpTimer_Tick;
+        }
+
+        private void CurrentInstance_NavigateToParentRequestedEvent(object sender, EventArgs e)
+        {
+            string parentDirectoryOfPath;
+            // Check that there isn't a slash at the end
+            if ((ViewModel.WorkingDirectory.Count() - 1) - ViewModel.WorkingDirectory.LastIndexOf("\\") > 0)
+            {
+                parentDirectoryOfPath = ViewModel.WorkingDirectory.Remove(ViewModel.WorkingDirectory.LastIndexOf("\\"));
+            }
+            else  // Slash found at end
+            {
+                var currentPathWithoutEndingSlash = ViewModel.WorkingDirectory.Remove(ViewModel.WorkingDirectory.LastIndexOf("\\"));
+                parentDirectoryOfPath = currentPathWithoutEndingSlash.Remove(currentPathWithoutEndingSlash.LastIndexOf("\\"));
+            }
+
+            App.CurrentInstance.ContentFrame.Navigate(App.CurrentInstance.CurrentPageType, parentDirectoryOfPath, new SuppressNavigationTransitionInfo());
+        }
+
+        private void CurrentInstance_CancelLoadRequestedEvent(object sender, EventArgs e)
+        {
+            ViewModel.CancelLoadAndClearFiles();
+        }
+
+        private async void CurrentInstance_RefreshRequestedEvent(object sender, EventArgs e)
+        {
+            await ViewModel.RefreshItems();
         }
 
         protected abstract void SetSelectedItemOnUi(ListedItem selectedItem);
@@ -148,6 +225,12 @@ namespace Files
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        private void JumpTimer_Tick(object sender, object e)
+        {
+            _jumpString = "";
+            jumpTimer.Stop();
+        }
+
         protected override async void OnNavigatedTo(NavigationEventArgs eventArgs)
         {
             base.OnNavigatedTo(eventArgs);
@@ -176,6 +259,9 @@ namespace Files
             }
 
             await ViewModel.RefreshItems();
+            App.CurrentInstance.RefreshRequestedEvent += CurrentInstance_RefreshRequestedEvent;
+            App.CurrentInstance.CancelLoadRequestedEvent += CurrentInstance_CancelLoadRequestedEvent;
+            App.CurrentInstance.NavigateToParentRequestedEvent += CurrentInstance_NavigateToParentRequestedEvent;
 
             App.Clipboard_ContentChanged(null, null);
             App.CurrentInstance.NavigationToolbar.PathControlDisplayText = parameters;
@@ -190,6 +276,10 @@ namespace Files
             {
                 ViewModel._fileQueryResult.ContentsChanged -= ViewModel.FileContentsChanged;
             }
+            App.CurrentInstance.RefreshRequestedEvent -= CurrentInstance_RefreshRequestedEvent;
+            App.CurrentInstance.CancelLoadRequestedEvent -= CurrentInstance_CancelLoadRequestedEvent;
+            App.CurrentInstance.NavigateToParentRequestedEvent -= CurrentInstance_NavigateToParentRequestedEvent;
+
             App.AppSettings.LayoutModeChangeRequested -= AppSettings_LayoutModeChangeRequested;
         }
 
@@ -251,7 +341,7 @@ namespace Files
             }
 
             //check if the selected file is an image
-            App.InteractionViewModel.CheckForImage();
+            CheckForImage();
         }
 
 

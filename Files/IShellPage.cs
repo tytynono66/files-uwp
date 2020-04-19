@@ -8,6 +8,9 @@ namespace Files
 {
     public interface IShellPage
     {
+        public event EventHandler RefreshRequestedEvent;
+        public event EventHandler CancelLoadRequestedEvent;
+        public event EventHandler NavigateToParentRequestedEvent;
         public Frame ContentFrame { get; }
         public object OperationsControl { get; }   // Reserved for future use
         public Type CurrentPageType { get; }

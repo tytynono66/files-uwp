@@ -794,7 +794,7 @@
                             x:Uid="NavigationToolbarPaste"
                             x:Load="{x:Bind local1:App.InteractionViewModel.IsPageTypeNotHome, Mode=OneWay}"
                             Click="{x:Bind local1:App.CurrentInstance.InteractionOperations.PasteItem_ClickAsync}"
-                            IsEnabled="{x:Bind local1:App.PS.IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            IsEnabled="{x:Bind local1:App.InteractionViewModel.IsPasteEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Text="Paste" />
                         <MenuFlyoutItem
                             x:Name="OpenInTerminalButton"

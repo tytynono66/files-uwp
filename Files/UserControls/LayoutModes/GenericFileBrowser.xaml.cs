@@ -355,5 +355,11 @@ namespace Files
         {
             AllView.SelectedItems.Clear();
         }
+
+        public void SelectAndScrollItemIntoView(ListedItem li)
+        {
+            AllView.SelectedItem = li;
+            AllView.ScrollIntoView(li, null);
+        }
     }
 }

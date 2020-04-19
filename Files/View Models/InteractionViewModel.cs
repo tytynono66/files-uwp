@@ -48,25 +48,6 @@ namespace Files.Controls
             set => Set(ref _IsPageTypeNotHome, value);
         }
 
-        public void CheckForImage()
-        {
-            //check if the selected item is an image file
-            try
-            {
-                string ItemExtension = (App.CurrentInstance.ContentPage as BaseLayout).SelectedItem.FileExtension;
-
-                if (ItemExtension == ".png" || ItemExtension == ".jpg" || ItemExtension == ".bmp" || ItemExtension == ".jpeg")
-                {
-                    // Since item is an image, set the IsSelectedItemImage property to true
-                    App.InteractionViewModel.IsSelectedItemImage = true;
-                }
-                else
-                {
-                    // Since item is not an image, set the IsSelectedItemImage property to false
-                    App.InteractionViewModel.IsSelectedItemImage = false;
-                }
-            }
-            catch (Exception) { }
-        }
+        
     }
 }
