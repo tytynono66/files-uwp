@@ -70,8 +70,7 @@ namespace Files
             }
         }
 
-        public Interaction AssociatedOperations { get; internal set; }
-        public ItemViewModel ViewModel { get; internal set; }
+        public ItemViewModel ViewModel { get; internal set; } = new ItemViewModel();
         public bool IsQuickLookEnabled { get; set; } = false;
         public bool isRenamingItem = false;
         private bool isItemSelected = false;
@@ -351,8 +350,7 @@ namespace Files
             {
                 App.CurrentInstance = ItemViewModel.GetCurrentSelectedTabInstance<ModernShellPage>();
             }
-            AssociatedOperations = new Interaction();
-            ViewModel = new ItemViewModel();
+
             this.Loaded -= Page_Loaded;
         }
 
@@ -381,7 +379,7 @@ namespace Files
                     break;
                 case (true, false, false, true, VirtualKey.V): //ctrl + v, paste
                     if (!App.CurrentInstance.NavigationToolbar.IsEditModeEnabled)
-                        await PasteItems();
+                        PasteItems();
                     break;
                 case (true, false, false, true, VirtualKey.X): //ctrl + x, cut
                     if (!App.CurrentInstance.NavigationToolbar.IsEditModeEnabled)
@@ -462,7 +460,7 @@ namespace Files
         {
             if (e.DataView.Contains(StandardDataFormats.StorageItems))
             {
-                await PasteItems(e.DataView);
+                PasteItems(e.DataView);
                 e.Handled = true;
             }
         }
@@ -505,7 +503,7 @@ namespace Files
         {
             e.Handled = true;
             ListedItem rowItem = GetItemFromElement(sender);
-            await PasteItems(e.DataView);
+            PasteItems(e.DataView);
         }
 
         protected void InitializeDrag(UIElement element)
@@ -526,5 +524,27 @@ namespace Files
                 }
             }
         }
+
+        public void PasteEmptySpace_Click(object sender, RoutedEventArgs e) => PasteItems();
+        public void OpenTerminal_Click(object sender, RoutedEventArgs e) => OpenDirectoryInTerminal();
+        public void NewFolder_Click(object sender, RoutedEventArgs e) => CreateFile(Dialogs.AddItemResultType.Folder);
+        public void NewBitmapImage_Click(object sender, RoutedEventArgs e) => CreateFile(Dialogs.AddItemResultType.BitmapImage);
+        public void NewTextDocument_Click(object sender, RoutedEventArgs e) => CreateFile(Dialogs.AddItemResultType.TextDocument);
+        public void PropertiesFolder_Click(object sender, RoutedEventArgs e) => DisplayCurrentFolderProperties();
+        public void UnzipItem_Click(object sender, RoutedEventArgs e) => ExtractItems();
+        public void OpenItem_Click(object sender, RoutedEventArgs e) => OpenItems();
+        public void OpenInNewTab_Click(object sender, RoutedEventArgs e) => OpenDirectoryItemsInNewTab();
+        public void OpenInNewWindowItem_Click(object sender, RoutedEventArgs e) => OpenItemsInNewWindow();
+        public void SetAsDesktopBackgroundItem_Click(object sender, RoutedEventArgs e) => SetItemAsDesktopBackground();
+        public void ShareItem_Click(object sender, RoutedEventArgs e) => InvokeShareUI();
+        public void CutItem_Click(object sender, RoutedEventArgs e) => CutItem();
+        public void CopyItem_Click(object sender, RoutedEventArgs e) => CopyItem();
+        public void DeleteItem_Click(object sender, RoutedEventArgs e) => DeleteItems();
+        public void RenameItem_Click(object sender, RoutedEventArgs e) => (App.CurrentInstance.ContentFrame.Content as IChildLayout).BeginRename();
+        public void SidebarPinItem_Click(object sender, RoutedEventArgs e) => PinItems();
+        public void PropertiesItem_Click(object sender, RoutedEventArgs e) => DisplayItemProperties();
+        public void QuickLook_Click(object sender, RoutedEventArgs e) => ToggleQuickLook();
+        public void List_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e) => OpenItems();
+        public void CopyPathButton_Click(object sender, RoutedEventArgs e) => CopyWorkingDirectory();
     }
 }

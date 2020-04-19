@@ -181,7 +181,7 @@ namespace Files.UserControls
             if (e.Key == VirtualKey.Enter)
             {
                 var PathBox = (sender as TextBox);
-                CheckPathInput(App.CurrentInstance.ViewModel, PathBox.Text);
+                CheckPathInput(PathBox.Text);
                 App.CurrentInstance.NavigationToolbar.IsEditModeEnabled = false;
             }
             else if (e.Key == VirtualKey.Escape)
@@ -190,16 +190,12 @@ namespace Files.UserControls
             }
         }
 
-        public async void CheckPathInput(ItemViewModel instance, string CurrentInput)
+        public async void CheckPathInput(string CurrentInput)
         {
-            if (CurrentInput != instance.WorkingDirectory || App.CurrentInstance.ContentFrame.CurrentSourcePageType == typeof(YourHome))
+            if (!App.InteractionViewModel.IsPageTypeNotHome)
             {
-                //(App.CurrentInstance.OperationsControl as RibbonArea).RibbonViewModel.HomeItems.isEnabled = false;
-                //(App.CurrentInstance.OperationsControl as RibbonArea).RibbonViewModel.ShareItems.isEnabled = false;
-
                 if (CurrentInput.Equals("Home", StringComparison.OrdinalIgnoreCase) || CurrentInput.Equals("New tab", StringComparison.OrdinalIgnoreCase))
                 {
-                    App.CurrentInstance.ViewModel.WorkingDirectory = "New tab";
                     App.CurrentInstance.ContentFrame.Navigate(typeof(YourHome), "New tab", new SuppressNavigationTransitionInfo());
                 }
                 else
@@ -238,40 +234,28 @@ namespace Files.UserControls
                         try
                         {
                             await StorageFile.GetFileFromPathAsync(CurrentInput);
-                            await Interaction.InvokeWin32Component(CurrentInput);
+                            await BaseLayout.InvokeWin32Component(CurrentInput);
                         }
                         catch (Exception ex) // Not a file or not accessible
                         {
+                            // Launch terminal application if possible, and check result
+                            var result = await (App.CurrentInstance.ContentFrame.Content as BaseLayout).LaunchTerminalFromPathBoxInput(CurrentInput);
 
-                            // Launch terminal application if possible
-                            var localSettings = ApplicationData.Current.LocalSettings;
-
-                            foreach (var item in App.AppSettings.Terminals)
+                            if (result == false)
                             {
-                                if (item.Path.Equals(CurrentInput, StringComparison.OrdinalIgnoreCase) || item.Path.Equals(CurrentInput + ".exe", StringComparison.OrdinalIgnoreCase))
+                                var dialog = new ContentDialog()
                                 {
-                                    localSettings.Values["Application"] = item.Path;
-                                    localSettings.Values["Arguments"] = String.Format(item.arguments, App.CurrentInstance.ViewModel.WorkingDirectory);
+                                    Title = "Invalid item",
+                                    Content = "The item referenced is either invalid or inaccessible.\nMessage:\n\n" + ex.Message,
+                                    CloseButtonText = "OK"
+                                };
 
-                                    await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
-
-                                    return;
-                                }
+                                await dialog.ShowAsync();
                             }
-
-                            var dialog = new ContentDialog()
-                            {
-                                Title = "Invalid item",
-                                Content = "The item referenced is either invalid or inaccessible.\nMessage:\n\n" + ex.Message,
-                                CloseButtonText = "OK"
-                            };
-
-                            await dialog.ShowAsync();
+                            
                         }
                     }
                 }
-
-                App.CurrentInstance.NavigationToolbar.PathControlDisplayText = App.CurrentInstance.ViewModel.WorkingDirectory;
             }
         }
 

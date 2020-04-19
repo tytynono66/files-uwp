@@ -197,13 +197,13 @@ namespace Files.Views.Pages
             switch (c: ctrl, s: shift, a: alt, t: tabInstance, k: e.Key)
             {
                 case (false, false, true, true, VirtualKey.Left): //alt + back arrow, backward
-                    Back_Click(null, null);
+                    Back_Click();
                     break;
                 case (false, false, true, true, VirtualKey.Right): //alt + right arrow, forward
-                    Forward_Click(null, null);
+                    Forward_Click();
                     break;
                 case (true, false, false, true, VirtualKey.R): //ctrl + r, refresh
-                    Refresh_Click(null, null);
+                    Refresh_Click();
                     break;
                     //case (true, false, false, true, VirtualKey.F): //ctrl + f, search box
                     //    (App.CurrentInstance.OperationsControl as RibbonArea).RibbonTabView.SelectedIndex = 0;
@@ -227,20 +227,20 @@ namespace Files.Views.Pages
         {
             if (args.CurrentPoint.Properties.IsXButton1Pressed)
             {
-                Back_Click(null, null);
+                Back_Click();
             }
             else if (args.CurrentPoint.Properties.IsXButton1Pressed)
             {
-                Forward_Click(null, null);
+                Forward_Click();
             }
         }
 
-        public void Refresh_Click(object sender, RoutedEventArgs e)
+        public void Refresh_Click()
         {
             RefreshRequestedEvent?.Invoke(this, EventArgs.Empty);
         }
 
-        public void Back_Click(object sender, RoutedEventArgs e)
+        public void Back_Click()
         {
             App.CurrentInstance.NavigationToolbar.CanGoBack = false;
             if (ItemDisplayFrame.CanGoBack)
@@ -257,7 +257,7 @@ namespace Files.Views.Pages
             }
         }
 
-        public void Forward_Click(object sender, RoutedEventArgs e)
+        public void Forward_Click()
         {
             App.CurrentInstance.NavigationToolbar.CanGoForward = false;
             if (ItemDisplayFrame.CanGoForward)
@@ -274,12 +274,18 @@ namespace Files.Views.Pages
             }
         }
 
-        public void Up_Click(object sender, RoutedEventArgs e)
+        public void Up_Click()
         {
             App.CurrentInstance.NavigationToolbar.CanNavigateToParent = false;
             CancelLoadRequestedEvent?.Invoke(this, EventArgs.Empty);
             NavigateToParentRequestedEvent?.Invoke(this, EventArgs.Empty);
         }
+
+        public void NavigateBack() => Back_Click();
+
+        public void NavigateForward() => Forward_Click();
+
+        public void NavigateUp() => Up_Click();
     }
 
     public enum InteractionOperationType

@@ -6,7 +6,7 @@ namespace Files.Controls
 {
     public class InteractionViewModel : ViewModelBase
     {
-        private bool _IsPasteEnabled;
+        private bool _IsPasteEnabled = false;
         public bool IsPasteEnabled
         {
             get => _IsPasteEnabled;

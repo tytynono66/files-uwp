@@ -7,7 +7,7 @@
     xmlns:helpers="using:Files.Helpers"
     xmlns:local="using:Files.UserControls"
     xmlns:local1="using:Files"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:pages="using:Files.Views.Pages"
     d:DesignHeight="80"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -536,7 +536,7 @@
                 ToolTipService.ToolTip="Back"
                 x:FieldModifier="public"
                 Background="Transparent"
-                Click="{x:Bind local1:NavigationActions.Back_Click}"
+                Click="{x:Bind local1:App.CurrentInstance.NavigateBack}"
                 CornerRadius="2"
                 FontFamily="Segoe MDL2 Assets"
                 IsEnabled="{x:Bind local1:App.CurrentInstance.NavigationToolbar.CanGoBack}"
@@ -559,7 +559,7 @@
                 ToolTipService.ToolTip="Forward"
                 x:FieldModifier="public"
                 Background="Transparent"
-                Click="{x:Bind local1:NavigationActions.Forward_Click}"
+                Click="{x:Bind local1:App.CurrentInstance.NavigateForward}"
                 CornerRadius="2"
                 FontFamily="Segoe MDL2 Assets"
                 IsEnabled="{x:Bind local1:App.CurrentInstance.NavigationToolbar.CanGoForward}"
@@ -581,7 +581,7 @@
                 ToolTipService.ToolTip="Up"
                 x:FieldModifier="public"
                 Background="Transparent"
-                Click="{x:Bind local1:NavigationActions.Up_Click}"
+                Click="{x:Bind local1:App.CurrentInstance.NavigateUp}"
                 CornerRadius="2"
                 FontFamily="Segoe MDL2 Assets"
                 Style="{StaticResource ToolBarButtonStyle}"
@@ -603,7 +603,7 @@
                 ToolTipService.ToolTip="Refresh"
                 x:FieldModifier="public"
                 Background="Transparent"
-                Click="{x:Bind local1:NavigationActions.Refresh_Click}"
+                Click="{x:Bind ((local1:BaseLayout)local1:App.CurrentInstance.ContentFrame.Content).ViewModel.RefreshItems}"
                 CornerRadius="2"
                 FontFamily="Segoe MDL2 Assets"
                 Style="{StaticResource ToolBarButtonStyle}">
@@ -706,7 +706,7 @@
                     <MenuFlyout Placement="BottomEdgeAlignedRight">
                         <MenuFlyoutItem
                             x:Uid="ModernNavigationToolbaNewFolder"
-                            Click="{x:Bind local1:App.CurrentInstance.InteractionOperations.NewFolder_Click}"
+                            Click="{x:Bind ((local1:BaseLayout)local1:App.CurrentInstance.ContentFrame.Content).NewFolder_Click}"
                             Text="Folder">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE8B7;" />
@@ -715,7 +715,7 @@
                         <MenuFlyoutSeparator />
                         <MenuFlyoutItem
                             x:Uid="ModernNavigationToolbaNewBitmapImage"
-                            Click="{x:Bind local1:App.CurrentInstance.InteractionOperations.NewBitmapImage_Click}"
+                            Click="{x:Bind ((local1:BaseLayout)local1:App.CurrentInstance.ContentFrame.Content).NewBitmapImage_Click}"
                             Text="Bitmap Image">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xEB9F;" />
@@ -723,7 +723,7 @@
                         </MenuFlyoutItem>
                         <MenuFlyoutItem
                             x:Uid="ModernNavigationToolbaNewTextDocument"
-                            Click="{x:Bind local1:App.CurrentInstance.InteractionOperations.NewTextDocument_Click}"
+                            Click="{x:Bind ((local1:BaseLayout)local1:App.CurrentInstance.ContentFrame.Content).NewTextDocument_Click}"
                             Text="Text Document">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE8A5;" />
@@ -776,31 +776,31 @@
                     <MenuFlyout Placement="BottomEdgeAlignedRight">
                         <MenuFlyoutItem
                             x:Uid="NavigationToolbarNewTab"
-                            Click="{x:Bind local1:App.CurrentInstance.InteractionOperations.OpenNewTab}"
+                            Click="{x:Bind ((local1:BaseLayout)local1:App.CurrentInstance.ContentFrame.Content).OpenInNewTab_Click}"
                             Text="New Tab" />
                         <MenuFlyoutItem
                             x:Uid="NavigationToolbarNewWindow"
-                            Click="{x:Bind local1:App.CurrentInstance.InteractionOperations.LaunchNewWindow}"
+                            Click="{x:Bind ((local1:BaseLayout)local1:App.CurrentInstance.ContentFrame.Content).OpenInNewWindowItem_Click}"
                             Text="New Window" />
                         <MenuFlyoutItem
                             x:Name="CopyPathButton"
                             x:Uid="NavigationToolbarCopyPath"
                             x:Load="{x:Bind local1:App.InteractionViewModel.IsPageTypeNotHome, Mode=OneWay}"
-                            Click="{x:Bind local1:App.CurrentInstance.InteractionOperations.GetPath_Click}"
+                            Click="{x:Bind ((local1:BaseLayout)local1:App.CurrentInstance.ContentFrame.Content).CopyPathButton_Click}"
                             Text="Copy Path" />
                         <MenuFlyoutSeparator x:Name="SeparatorBar" x:Load="{x:Bind local1:App.InteractionViewModel.IsPageTypeNotHome, Mode=OneWay}" />
                         <MenuFlyoutItem
                             x:Name="PasteButton"
                             x:Uid="NavigationToolbarPaste"
                             x:Load="{x:Bind local1:App.InteractionViewModel.IsPageTypeNotHome, Mode=OneWay}"
-                            Click="{x:Bind local1:App.CurrentInstance.InteractionOperations.PasteItem_ClickAsync}"
+                            Click="{x:Bind ((local1:BaseLayout)local1:App.CurrentInstance.ContentFrame.Content).PasteEmptySpace_Click}"
                             IsEnabled="{x:Bind local1:App.InteractionViewModel.IsPasteEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Text="Paste" />
                         <MenuFlyoutItem
                             x:Name="OpenInTerminalButton"
                             x:Uid="NavigationToolbarOpenInTerminal"
                             x:Load="{x:Bind local1:App.InteractionViewModel.IsPageTypeNotHome, Mode=OneWay}"
-                            Click="{x:Bind local1:App.CurrentInstance.InteractionOperations.OpenDirectoryInTerminal}"
+                            Click="{x:Bind ((local1:BaseLayout)local1:App.CurrentInstance.ContentFrame.Content).OpenTerminal_Click}"
                             Text="Open in Terminal..." />
                     </MenuFlyout>
                 </Button.Flyout>

@@ -1,4 +1,5 @@
-﻿using Files.Interacts;
+﻿using Files.Helpers;
+using Files.Interacts;
 using System;
 using Windows.ApplicationModel;
 using Windows.System;
@@ -20,7 +21,7 @@ namespace Files.SettingsPages
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var clicked = e.ClickedItem as ListViewBase;
-            var trulyclicked = Interaction.FindParent<ListViewItem>(e.ClickedItem as DependencyObject);
+            var trulyclicked = FindHelpers.FindParent<ListViewItem>(e.ClickedItem as DependencyObject);
             if (trulyclicked.Name == "FeedbackForm")
             {
                 await Launcher.LaunchUriAsync(new Uri(@"https://github.com/duke7553/files-uwp/issues/new/choose"));

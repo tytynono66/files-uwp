@@ -12,7 +12,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
-    NavigationCacheMode="Disabled"
+    NavigationCacheMode="Required"
     PointerReleased="GenericItemView_PointerReleased"
     mc:Ignorable="d">
 
@@ -60,7 +60,7 @@
             <MenuFlyoutItem
                 x:Name="RefreshEmptySpace"
                 x:Uid="BaseLayoutContextFlyoutRefresh"
-                Click="{x:Bind local:NavigationActions.Refresh_Click}"
+                Click="{x:Bind ViewModel.RefreshItems}"
                 Text="Refresh">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE72C;" />
@@ -70,7 +70,7 @@
             <MenuFlyoutItem
                 x:Name="PasteEmptySpace"
                 x:Uid="BaseLayoutContextFlyoutPaste"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.PasteItem_ClickAsync}"
+                Click="PasteEmptySpace_Click"
                 IsEnabled="{x:Bind local:App.InteractionViewModel.IsPasteEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 Text="Paste">
                 <MenuFlyoutItem.Icon>
@@ -81,7 +81,7 @@
             <MenuFlyoutItem
                 x:Name="OpenTerminal"
                 x:Uid="BaseLayoutContextFlyoutOpenInTerminal"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.OpenDirectoryInTerminal}"
+                Click="OpenTerminal_Click"
                 IsEnabled="True"
                 Text="Open in Terminal...">
                 <MenuFlyoutItem.Icon>
@@ -99,7 +99,7 @@
                 <MenuFlyoutItem
                     x:Name="NewFolder"
                     x:Uid="BaseLayoutContextFlyoutNewFolder"
-                    Click="{x:Bind local:App.CurrentInstance.InteractionOperations.NewFolder_Click}"
+                    Click="NewFolder_Click"
                     Text="Folder">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xE8B7;" />
@@ -109,7 +109,7 @@
                 <MenuFlyoutItem
                     x:Name="NewBitmapImage"
                     x:Uid="BaseLayoutContextFlyoutNewBitmapImage"
-                    Click="{x:Bind local:App.CurrentInstance.InteractionOperations.NewBitmapImage_Click}"
+                    Click="NewBitmapImage_Click"
                     Text="Bitmap Image">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xEB9F;" />
@@ -118,7 +118,7 @@
                 <MenuFlyoutItem
                     x:Name="NewTextDocument"
                     x:Uid="BaseLayoutContextFlyoutNewTextDocument"
-                    Click="{x:Bind local:App.CurrentInstance.InteractionOperations.NewTextDocument_Click}"
+                    Click="NewTextDocument_Click"
                     Text="Text Document">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xE8A5;" />
@@ -129,7 +129,7 @@
             <MenuFlyoutItem
                 x:Name="PropertiesFolder"
                 x:Uid="BaseLayoutContextFlyoutPropertiesFolder"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.ShowFolderPropertiesButton_Click}"
+                Click="PropertiesFolder_Click"
                 Text="Properties">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE946;" />
@@ -142,7 +142,7 @@
                 x:Name="UnzipItem"
                 x:Uid="BaseLayoutItemContextFlyoutExtract"
                 x:Load="False"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.ExtractItems_Click}"
+                Click="UnzipItem_Click"
                 Tag="Extract_FlyoutItem"
                 Text="Extract">
                 <MenuFlyoutItem.Icon>
@@ -153,7 +153,7 @@
                 x:Name="OpenItem"
                 x:Uid="BaseLayoutItemContextFlyoutOpenWith"
                 x:Load="False"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.OpenItem_Click}"
+                Click="OpenItem_Click"
                 Tag="Open_FlyoutItem"
                 Text="Open with...">
                 <MenuFlyoutItem.Icon>
@@ -164,7 +164,7 @@
                 x:Name="OpenInNewTab"
                 x:Uid="BaseLayoutItemContextFlyoutOpenInNewTab"
                 x:Load="False"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.OpenDirectoryInNewTab_Click}"
+                Click="OpenInNewTab_Click"
                 Tag="OpenTab_FlyoutItem"
                 Text="Open in new tab">
                 <MenuFlyoutItem.Icon>
@@ -175,7 +175,7 @@
                 x:Name="OpenInNewWindowItem"
                 x:Uid="BaseLayoutItemContextFlyoutOpenInNewWindow"
                 x:Load="False"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.OpenInNewWindowItem_Click}"
+                Click="OpenInNewWindowItem_Click"
                 Tag="OpenWindow_FlyoutItem"
                 Text="Open in new window">
                 <MenuFlyoutItem.Icon>
@@ -185,7 +185,7 @@
             <MenuFlyoutItem
                 x:Name="SetAsDesktopBackgroundItem"
                 x:Uid="BaseLayoutItemContextFlyoutSetAsDesktopBackground"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.SetAsDesktopBackgroundItem_Click}"
+                Click="SetAsDesktopBackgroundItem_Click"
                 Text="Set as desktop background"
                 Visibility="{x:Bind local:App.InteractionViewModel.IsSelectedItemImage, Mode=OneWay}">
                 <MenuFlyoutItem.Icon>
@@ -195,7 +195,7 @@
             <MenuFlyoutItem
                 x:Name="ShareItem"
                 x:Uid="BaseLayoutItemContextFlyoutShare"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.ShareItem_Click}"
+                Click="ShareItem_Click"
                 Text="Share">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE72D;" />
@@ -203,18 +203,18 @@
             </MenuFlyoutItem>
             <MenuFlyoutSeparator />
             <MenuFlyoutItem
-                x:Name="CutItem"
+                x:Name="CutFlyoutItem"
                 x:Uid="BaseLayoutItemContextFlyoutCut"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.CutItem_Click}"
+                Click="CutItem_Click"
                 Text="Cut">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE8C6;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
             <MenuFlyoutItem
-                x:Name="CopyItem"
+                x:Name="CopyFlyoutItem"
                 x:Uid="BaseLayoutItemContextFlyoutCopy"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.CopyItem_ClickAsync}"
+                Click="CopyItem_Click"
                 Text="Copy">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE8C8;" />
@@ -224,7 +224,7 @@
             <MenuFlyoutItem
                 x:Name="DeleteItem"
                 x:Uid="BaseLayoutItemContextFlyoutDelete"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.DeleteItem_Click}"
+                Click="DeleteItem_Click"
                 Text="Delete">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE74D;" />
@@ -233,7 +233,7 @@
             <MenuFlyoutItem
                 x:Name="RenameItem"
                 x:Uid="BaseLayoutItemContextFlyoutRename"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.RenameItem_Click}"
+                Click="RenameItem_Click"
                 Text="Rename">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE8AC;" />
@@ -244,7 +244,7 @@
                 x:Name="SidebarPinItem"
                 x:Uid="BaseLayoutItemContextFlyoutPinToSidebar"
                 x:Load="False"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.PinItem_Click}"
+                Click="SidebarPinItem_Click"
                 Tag="PinItem_FlyoutItem"
                 Text="Pin to sidebar">
                 <MenuFlyoutItem.Icon>
@@ -254,7 +254,7 @@
             <MenuFlyoutItem
                 x:Name="PropertiesItem"
                 x:Uid="BaseLayoutItemContextFlyoutProperties"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.ShowPropertiesButton_Click}"
+                Click="PropertiesItem_Click"
                 Text="Properties">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE946;" />
@@ -263,7 +263,7 @@
             <MenuFlyoutItem
                 x:Name="QuickLook"
                 x:Uid="BaseLayoutItemContextFlyoutQuickLook"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.ToggleQuickLook_Click}"
+                Click="QuickLook_Click"
                 Text="QuickLook"
                 Visibility="{x:Bind IsQuickLookEnabled}">
                 <MenuFlyoutItem.Icon>
@@ -306,7 +306,7 @@
             CellEditEnded="AllView_CellEditEnded"
             CellEditEnding="AllView_CellEditEnding"
             ClipboardCopyMode="None"
-            DoubleTapped="{x:Bind local:App.CurrentInstance.InteractionOperations.List_ItemClick}"
+            DoubleTapped="List_DoubleTapped"
             DragOver="List_DragOver"
             Drop="List_Drop"
             LoadingRow="AllView_LoadingRow"
@@ -316,7 +316,7 @@
             ItemsSource="{x:Bind ViewModel.FilesAndFolders, Mode=OneWay}"
             PreparingCellForEdit="AllView_PreparingCellForEdit"
             PreviewKeyDown="AllView_PreviewKeyDown"
-            RightTapped="{x:Bind local:App.CurrentInstance.InteractionOperations.AllView_RightTapped}"
+            RightTapped="DataGrid_RightTapped"
             RowDetailsVisibilityMode="Collapsed"
             ScrollViewer.IsScrollInertiaEnabled="True"
             SelectionChanged="AllView_SelectionChanged"

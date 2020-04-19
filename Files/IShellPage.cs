@@ -8,6 +8,9 @@ namespace Files
 {
     public interface IShellPage
     {
+        public void NavigateBack();
+        public void NavigateForward();
+        public void NavigateUp();
         public event EventHandler RefreshRequestedEvent;
         public event EventHandler CancelLoadRequestedEvent;
         public event EventHandler NavigateToParentRequestedEvent;

@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    NavigationCacheMode="Disabled"
+    NavigationCacheMode="Required"
     PointerPressed="PhotoAlbumViewer_PointerPressed"
     mc:Ignorable="d">
     <local:BaseLayout.Resources>
@@ -23,39 +23,39 @@
                 <muxc:RadioMenuFlyoutItem
                     x:Uid="BaseLayoutContextFlyoutSortByName"
                     GroupName="SortGroup"
-                    IsChecked="{x:Bind AssociatedViewModel.IsSortedByName, Mode=TwoWay}"
+                    IsChecked="{x:Bind ViewModel.IsSortedByName, Mode=TwoWay}"
                     Text="Name" />
                 <muxc:RadioMenuFlyoutItem
                     x:Uid="BaseLayoutContextFlyoutSortByDate"
                     GroupName="SortGroup"
-                    IsChecked="{x:Bind AssociatedViewModel.IsSortedByDate, Mode=TwoWay}"
+                    IsChecked="{x:Bind ViewModel.IsSortedByDate, Mode=TwoWay}"
                     Text="Date modified" />
                 <muxc:RadioMenuFlyoutItem
                     x:Uid="BaseLayoutContextFlyoutSortByType"
                     GroupName="SortGroup"
-                    IsChecked="{x:Bind AssociatedViewModel.IsSortedByType, Mode=TwoWay}"
+                    IsChecked="{x:Bind ViewModel.IsSortedByType, Mode=TwoWay}"
                     Text="Type" />
                 <muxc:RadioMenuFlyoutItem
                     x:Uid="BaseLayoutContextFlyoutSortBySize"
                     GroupName="SortGroup"
-                    IsChecked="{x:Bind AssociatedViewModel.IsSortedBySize, Mode=TwoWay}"
+                    IsChecked="{x:Bind ViewModel.IsSortedBySize, Mode=TwoWay}"
                     Text="Size" />
                 <MenuFlyoutSeparator />
                 <muxc:RadioMenuFlyoutItem
                     x:Uid="BaseLayoutContextFlyoutSortByAscending"
                     GroupName="SortOrderGroup"
-                    IsChecked="{x:Bind AssociatedViewModel.IsSortedAscending, Mode=TwoWay}"
+                    IsChecked="{x:Bind ViewModel.IsSortedAscending, Mode=TwoWay}"
                     Text="Ascending" />
                 <muxc:RadioMenuFlyoutItem
                     x:Uid="BaseLayoutContextFlyoutSortByDescending"
                     GroupName="SortOrderGroup"
-                    IsChecked="{x:Bind AssociatedViewModel.IsSortedDescending, Mode=TwoWay}"
+                    IsChecked="{x:Bind ViewModel.IsSortedDescending, Mode=TwoWay}"
                     Text="Descending" />
             </MenuFlyoutSubItem>
             <MenuFlyoutItem
                 x:Name="RefreshEmptySpace"
                 x:Uid="BaseLayoutContextFlyoutRefresh"
-                Click="{x:Bind local:NavigationActions.Refresh_Click}"
+                Click="{x:Bind ViewModel.RefreshItems}"
                 Text="Refresh">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE72C;" />
@@ -65,8 +65,8 @@
             <MenuFlyoutItem
                 x:Name="PasteEmptySpace"
                 x:Uid="BaseLayoutContextFlyoutPaste"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.PasteItem_ClickAsync}"
-                IsEnabled="{x:Bind Mode=TwoWay, Path=local:App.InteractionViewModel.IsPasteEnabled, UpdateSourceTrigger=PropertyChanged}"
+                Click="PasteEmptySpace_Click"
+                IsEnabled="{x:Bind local:App.InteractionViewModel.IsPasteEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 Text="Paste">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE77F;" />
@@ -76,7 +76,7 @@
             <MenuFlyoutItem
                 x:Name="OpenTerminal"
                 x:Uid="BaseLayoutContextFlyoutOpenInTerminal"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.OpenDirectoryInTerminal}"
+                Click="OpenTerminal_Click"
                 IsEnabled="True"
                 Text="Open in Terminal...">
                 <MenuFlyoutItem.Icon>
@@ -94,7 +94,7 @@
                 <MenuFlyoutItem
                     x:Name="NewFolder"
                     x:Uid="BaseLayoutContextFlyoutNewFolder"
-                    Click="{x:Bind local:App.CurrentInstance.InteractionOperations.NewFolder_Click}"
+                    Click="NewFolder_Click"
                     Text="Folder">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xE8B7;" />
@@ -104,7 +104,7 @@
                 <MenuFlyoutItem
                     x:Name="NewBitmapImage"
                     x:Uid="BaseLayoutContextFlyoutNewBitmapImage"
-                    Click="{x:Bind local:App.CurrentInstance.InteractionOperations.NewBitmapImage_Click}"
+                    Click="NewBitmapImage_Click"
                     Text="Bitmap Image">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xEB9F;" />
@@ -113,7 +113,7 @@
                 <MenuFlyoutItem
                     x:Name="NewTextDocument"
                     x:Uid="BaseLayoutContextFlyoutNewTextDocument"
-                    Click="{x:Bind local:App.CurrentInstance.InteractionOperations.NewTextDocument_Click}"
+                    Click="NewTextDocument_Click"
                     Text="Text Document">
                     <MenuFlyoutItem.Icon>
                         <FontIcon Glyph="&#xE8A5;" />
@@ -124,7 +124,7 @@
             <MenuFlyoutItem
                 x:Name="PropertiesFolder"
                 x:Uid="BaseLayoutContextFlyoutPropertiesFolder"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.ShowFolderPropertiesButton_Click}"
+                Click="PropertiesFolder_Click"
                 Text="Properties">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE946;" />
@@ -137,7 +137,7 @@
                 x:Name="UnzipItem"
                 x:Uid="BaseLayoutItemContextFlyoutExtract"
                 x:Load="False"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.ExtractItems_Click}"
+                Click="UnzipItem_Click"
                 Tag="Extract_FlyoutItem"
                 Text="Extract">
                 <MenuFlyoutItem.Icon>
@@ -148,7 +148,7 @@
                 x:Name="OpenItem"
                 x:Uid="BaseLayoutItemContextFlyoutOpenWith"
                 x:Load="False"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.OpenItem_Click}"
+                Click="OpenItem_Click"
                 Tag="Open_FlyoutItem"
                 Text="Open with...">
                 <MenuFlyoutItem.Icon>
@@ -159,7 +159,7 @@
                 x:Name="OpenInNewTab"
                 x:Uid="BaseLayoutItemContextFlyoutOpenInNewTab"
                 x:Load="False"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.OpenDirectoryInNewTab_Click}"
+                Click="OpenInNewTab_Click"
                 Tag="OpenTab_FlyoutItem"
                 Text="Open in new tab">
                 <MenuFlyoutItem.Icon>
@@ -170,7 +170,7 @@
                 x:Name="OpenInNewWindowItem"
                 x:Uid="BaseLayoutItemContextFlyoutOpenInNewWindow"
                 x:Load="False"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.OpenInNewWindowItem_Click}"
+                Click="OpenInNewWindowItem_Click"
                 Tag="OpenWindow_FlyoutItem"
                 Text="Open in new window">
                 <MenuFlyoutItem.Icon>
@@ -180,7 +180,7 @@
             <MenuFlyoutItem
                 x:Name="SetAsDesktopBackgroundItem"
                 x:Uid="BaseLayoutItemContextFlyoutSetAsDesktopBackground"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.SetAsDesktopBackgroundItem_Click}"
+                Click="SetAsDesktopBackgroundItem_Click"
                 Text="Set as desktop background"
                 Visibility="{x:Bind local:App.InteractionViewModel.IsSelectedItemImage, Mode=OneWay}">
                 <MenuFlyoutItem.Icon>
@@ -190,7 +190,7 @@
             <MenuFlyoutItem
                 x:Name="ShareItem"
                 x:Uid="BaseLayoutItemContextFlyoutShare"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.ShareItem_Click}"
+                Click="ShareItem_Click"
                 Text="Share">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE72D;" />
@@ -198,18 +198,18 @@
             </MenuFlyoutItem>
             <MenuFlyoutSeparator />
             <MenuFlyoutItem
-                x:Name="CutItem"
+                x:Name="CutFlyoutItem"
                 x:Uid="BaseLayoutItemContextFlyoutCut"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.CutItem_Click}"
+                Click="CutItem_Click"
                 Text="Cut">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE8C6;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
             <MenuFlyoutItem
-                x:Name="CopyItem"
+                x:Name="CopyFlyoutItem"
                 x:Uid="BaseLayoutItemContextFlyoutCopy"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.CopyItem_ClickAsync}"
+                Click="CopyItem_Click"
                 Text="Copy">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE8C8;" />
@@ -219,7 +219,7 @@
             <MenuFlyoutItem
                 x:Name="DeleteItem"
                 x:Uid="BaseLayoutItemContextFlyoutDelete"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.DeleteItem_Click}"
+                Click="DeleteItem_Click"
                 Text="Delete">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE74D;" />
@@ -228,7 +228,7 @@
             <MenuFlyoutItem
                 x:Name="RenameItem"
                 x:Uid="BaseLayoutItemContextFlyoutRename"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.RenameItem_Click}"
+                Click="RenameItem_Click"
                 Text="Rename">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE8AC;" />
@@ -239,7 +239,7 @@
                 x:Name="SidebarPinItem"
                 x:Uid="BaseLayoutItemContextFlyoutPinToSidebar"
                 x:Load="False"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.PinItem_Click}"
+                Click="SidebarPinItem_Click"
                 Tag="PinItem_FlyoutItem"
                 Text="Pin to sidebar">
                 <MenuFlyoutItem.Icon>
@@ -249,7 +249,7 @@
             <MenuFlyoutItem
                 x:Name="PropertiesItem"
                 x:Uid="BaseLayoutItemContextFlyoutProperties"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.ShowPropertiesButton_Click}"
+                Click="PropertiesItem_Click"
                 Text="Properties">
                 <MenuFlyoutItem.Icon>
                     <FontIcon Glyph="&#xE946;" />
@@ -258,7 +258,7 @@
             <MenuFlyoutItem
                 x:Name="QuickLook"
                 x:Uid="BaseLayoutItemContextFlyoutQuickLook"
-                Click="{x:Bind local:App.CurrentInstance.InteractionOperations.ToggleQuickLook_Click}"
+                Click="QuickLook_Click"
                 Text="QuickLook"
                 Visibility="{x:Bind IsQuickLookEnabled}">
                 <MenuFlyoutItem.Icon>
@@ -278,7 +278,7 @@
             Height="10"
             VerticalAlignment="Top"
             IsIndeterminate="True"
-            Visibility="{x:Bind AssociatedViewModel.LoadIndicator.IsVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            Visibility="{x:Bind ViewModel.LoadIndicator.IsVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <TextBlock
             x:Name="EmptyText"
             x:Uid="EmptyFolder"
@@ -289,7 +289,7 @@
             Canvas.ZIndex="0"
             Text="This folder is empty."
             TextWrapping="Wrap"
-            Visibility="{x:Bind AssociatedViewModel.EmptyTextState.IsVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            Visibility="{x:Bind ViewModel.EmptyTextState.IsVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <GridView
             x:Name="FileList"
@@ -297,9 +297,9 @@
             VerticalContentAlignment="Stretch"
             x:FieldModifier="public"
             AllowDrop="True"
-            DoubleTapped="{x:Bind local:App.CurrentInstance.InteractionOperations.List_ItemClick}"
+            DoubleTapped="List_DoubleTapped"
             IsDoubleTapEnabled="True"
-            ItemsSource="{x:Bind AssociatedViewModel.FilesAndFolders}"
+            ItemsSource="{x:Bind ViewModel.FilesAndFolders}"
             PreviewKeyDown="FileList_PreviewKeyDown"
             DragOver="List_DragOver"
             Drop="List_Drop"

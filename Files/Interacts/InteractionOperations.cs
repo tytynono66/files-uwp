@@ -533,7 +533,7 @@ namespace Files
 
         public IReadOnlyList<IStorageItem> itemsToPaste;
         public int itemsPasted;
-        public async Task PasteItems(DataPackageView packageView = null)
+        public async void PasteItems(DataPackageView packageView = null)
         {
             if (packageView == null)
             {
@@ -853,20 +853,46 @@ namespace Files
             try
             {
                 string ItemExtension = SelectedItem.FileExtension;
-
-                if (ItemExtension.Equals(".png", StringComparison.OrdinalIgnoreCase) || ItemExtension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) 
-                    || ItemExtension.Equals(".bmp", StringComparison.OrdinalIgnoreCase) || ItemExtension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase))
+                if (SelectedItem.PrimaryItemAttribute == StorageItemTypes.File)
                 {
-                    // Since item is an image, set the IsSelectedItemImage property to true
-                    App.InteractionViewModel.IsSelectedItemImage = true;
+                    if (ItemExtension.Equals(".png", StringComparison.OrdinalIgnoreCase) || ItemExtension.Equals(".jpg", StringComparison.OrdinalIgnoreCase)
+                    || ItemExtension.Equals(".bmp", StringComparison.OrdinalIgnoreCase) || ItemExtension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Since item is an image, set the IsSelectedItemImage property to true
+                        App.InteractionViewModel.IsSelectedItemImage = true;
+                    }
+                    else
+                    {
+                        // Since item is not an image, set the IsSelectedItemImage property to false
+                        App.InteractionViewModel.IsSelectedItemImage = false;
+                    }
                 }
                 else
                 {
-                    // Since item is not an image, set the IsSelectedItemImage property to false
                     App.InteractionViewModel.IsSelectedItemImage = false;
                 }
+
             }
             catch (Exception) { }
+        }
+
+        public async Task<bool> LaunchTerminalFromPathBoxInput(string pathBoxInput)
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+
+            foreach (var item in App.AppSettings.Terminals)
+            {
+                if (item.Path.Equals(pathBoxInput, StringComparison.OrdinalIgnoreCase) || item.Path.Equals(pathBoxInput + ".exe", StringComparison.OrdinalIgnoreCase))
+                {
+                    localSettings.Values["Application"] = item.Path;
+                    localSettings.Values["Arguments"] = String.Format(item.arguments, ViewModel.WorkingDirectory);
+
+                    await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

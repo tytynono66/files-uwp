@@ -110,8 +110,6 @@ namespace Files.Controls
             }
 
             App.InteractionViewModel.IsPageTypeNotHome = true; // show controls that were hidden on the home page
-
-            App.CurrentInstance.NavigationToolbar.PathControlDisplayText = App.CurrentInstance.ViewModel.WorkingDirectory;
         }
 
         private void NavigationViewItem_RightTapped(object sender, RightTappedRoutedEventArgs e)

@@ -64,7 +64,7 @@ namespace Files
             this.Suspending += OnSuspending;
 
             // Initialize NLog
-            Windows.Storage.StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+            StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
             NLog.LogManager.Configuration.Variables["LogPath"] = storageFolder.Path;
 
             RegisterUncaughtExceptionLogger();
@@ -74,14 +74,15 @@ namespace Files
             LayoutDialogDisplay = new Dialogs.LayoutDialog();
             AddItemDialogDisplay = new Dialogs.AddItemDialog();
             ExceptionDialogDisplay = new Dialogs.ExceptionDialog();
-            // this.UnhandledException += App_UnhandledException;
-            Clipboard.ContentChanged += Clipboard_ContentChanged;
-            Clipboard_ContentChanged(null, null);
+            
             AppCenter.Start("682666d1-51d3-4e4a-93d0-d028d43baaa0", typeof(Analytics), typeof(Crashes));
 
             AppSettings = new SettingsViewModel();
             InteractionViewModel = new InteractionViewModel();
             SelectedItemPropertiesViewModel = new SelectedItemPropertiesViewModel();
+
+            Clipboard.ContentChanged += Clipboard_ContentChanged;
+            Clipboard_ContentChanged(null, null);
         }
 
         private void RegisterUncaughtExceptionLogger()
@@ -116,7 +117,7 @@ namespace Files
         {
             try
             {
-                if (App.CurrentInstance != null)
+                if (App.InteractionViewModel != null)
                 {
                     DataPackageView packageView = Clipboard.GetContent();
                     if (packageView.Contains(StandardDataFormats.StorageItems) && App.CurrentInstance.CurrentPageType != typeof(YourHome))
